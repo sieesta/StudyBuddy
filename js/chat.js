@@ -1,10 +1,15 @@
 // js/chat.js
 import { supabase } from './supabase.js';
 
-// Get base path for GitHub Pages
+// Detect if running on GitHub Pages and get the correct base path
 function getRedirectPath(page) {
-    const basePath = new URL(document.baseURI).pathname;
-    return basePath + page;
+    const pathname = window.location.pathname;
+    // Check if running on GitHub Pages (/StudyBuddy/)
+    if (pathname.includes('/StudyBuddy/')) {
+        return '/StudyBuddy/' + page;
+    }
+    // Local development or other deployment
+    return '/' + page;
 }
 
 const messagesContainer = document.getElementById('messages-container');

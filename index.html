@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StudyBuddy Finder - Find Your Study Partner</title>
-    <base href="/StudyBuddy/">
     <link rel="stylesheet" href="css/design-system.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -85,11 +84,27 @@
 
     <script>
         function toggleForms() {
-            document.getElementById('loginForm').style.display = 
-                document.getElementById('loginForm').style.display === 'none' ? 'block' : 'none';
-            document.getElementById('signupForm').style.display = 
-                document.getElementById('signupForm').style.display === 'none' ? 'block' : 'none';
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            
+            if (loginForm.style.display === 'none') {
+                loginForm.style.display = 'block';
+                signupForm.style.display = 'none';
+            } else {
+                loginForm.style.display = 'none';
+                signupForm.style.display = 'block';
+            }
         }
+
+        // Ensure signup form is visible on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            if (loginForm && signupForm) {
+                loginForm.style.display = 'none';
+                signupForm.style.display = 'block';
+            }
+        });
 
         // Hide loader after 2 seconds
         setTimeout(() => {

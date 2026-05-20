@@ -1,6 +1,17 @@
 // js/dashboard.js
 import { supabase } from './supabase.js';
 
+// Detect if running on GitHub Pages and get the correct base path
+function getRedirectPath(page) {
+    const pathname = window.location.pathname;
+    // Check if running on GitHub Pages (/StudyBuddy/)
+    if (pathname.includes('/StudyBuddy/')) {
+        return '/StudyBuddy/' + page;
+    }
+    // Local development or other deployment
+    return '/' + page;
+}
+
 const userList = document.getElementById('user-list');
 const groupList = document.getElementById('group-list');
 const searchBtn = document.getElementById('search-btn');
@@ -57,8 +68,7 @@ function displayGroups(groups) {
     document.querySelectorAll('.join-group-btn').forEach(button => {
         button.addEventListener('click', (e) => {
             const groupId = e.target.dataset.groupId;
-            const basePath = new URL(document.baseURI).pathname;
-            window.location.href = basePath + `chatroom.html?group_id=${groupId}`;
+            window.location.href = getRedirectPath(`chatroom.html?group_id=${groupId}`);
         });
     });
 }
