@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - StudyBuddy Finder</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="profile.html">Profile</a>
+            <button id="logout-btn">Logout</button>
+            <button id="dark-mode-toggle">🌙</button>
+        </nav>
+    </header>
+    <main class="container">
+        <h1>Find a Study Buddy</h1>
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search by subject or course...">
+            <button id="search-btn">Search</button>
+            <button id="match-buddy-btn">Match Me a Buddy</button>
+        </div>
+        <div id="user-list">
+            <!-- User profiles will be dynamically inserted here -->
+        </div>
+
+        <hr>
+
+        <h1>Study Groups</h1>
+        <div id="group-list">
+            <!-- Study groups will be dynamically inserted here -->
+        </div>
+        <div class="create-group-container">
+            <input type="text" id="group-name" placeholder="New group name">
+            <input type="text" id="group-subject" placeholder="Group subject">
+            <button id="create-group-btn">Create Group</button>
+        </div>
+    </main>
+    <script type="module" src="js/dashboard.js"></script>
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>

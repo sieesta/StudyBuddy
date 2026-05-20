@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - StudyBuddy Finder</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="profile.html">Profile</a>
+            <button id="logout-btn">Logout</button>
+            <button id="dark-mode-toggle">🌙</button>
+        </nav>
+    </header>
+    <main class="container">
+        <h1>Your Profile</h1>
+        <div id="profile-container">
+            <div class="profile-header">
+                <div id="avatar-container">
+                    <!-- Avatar will be loaded here -->
+                </div>
+                <input type="file" id="avatar-upload" accept="image/*" style="display: none;">
+                <button id="change-avatar-btn">Change Picture</button>
+            </div>
+            <form id="profile-form">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username">
+
+                <label for="course">Course:</label>
+                <input type="text" id="course" name="course">
+
+                <label for="subjects">Subjects (comma-separated):</label>
+                <input type="text" id="subjects" name="subjects">
+
+                <label for="bio">Bio:</label>
+                <textarea id="bio" name="bio"></textarea>
+
+                <button type="submit">Update Profile</button>
+            </form>
+        </div>
+    </main>
+    <script type="module" src="js/profile.js"></script>
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>

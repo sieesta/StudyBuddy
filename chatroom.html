@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatroom - StudyBuddy Finder</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="profile.html">Profile</a>
+            <button id="logout-btn">Logout</button>
+            <button id="dark-mode-toggle">🌙</button>
+        </nav>
+    </header>
+    <main class="container chat-container">
+        <div id="chat-area">
+            <div id="chat-header">
+                <h1 id="group-name-header">Chat Room</h1>
+                <button id="video-call-btn">📞</button>
+            </div>
+            <div id="chat-window">
+                <div id="messages-container">
+                    <!-- Messages will be dynamically inserted here -->
+                </div>
+            </div>
+            <div id="chat-input-container">
+                <input type="text" id="message-input" placeholder="Type a message...">
+                <button id="send-btn">Send</button>
+            </div>
+        </div>
+        <div id="ai-chatbot-panel">
+            <h2>StudyAI 🤖</h2>
+            <div id="ai-chat-window">
+                <!-- AI chat messages will appear here -->
+            </div>
+            <div id="ai-input-container">
+                <input type="text" id="ai-input" placeholder="Ask StudyAI...">
+                <button id="ai-send-btn">Ask</button>
+                <div id="ai-spinner" class="spinner" style="display: none;"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Video Call Modal -->
+    <div id="video-call-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <button id="close-video-call-btn" class="modal-close-btn">&times;</button>
+            <div id="jitsi-container"></div>
+        </div>
+    </div>
+
+    <script src="https://meet.jit.si/external_api.js"></script>
+    <script type="module" src="js/chat.js"></script>
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>

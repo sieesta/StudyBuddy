@@ -1,0 +1,9 @@
+# Supabase
+.supabase
+supabase/.env.local
+
+# Node
+node_modules
+
+# IDE / Editor
+.vscode
