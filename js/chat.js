@@ -63,17 +63,45 @@ async function fetchUser(userId) {
     if (usersCache[userId]) {
         return usersCache[userId];
     }
-    const { data, error } = await supabase
-        .from('profiles')
-        .select('username, avatar')
-        .eq('id', userId)
-        .single();
-    if (error) {
+    // Try selecting the modern `avatar` column first, then fall back to `avatar_url` if that column doesn't exist
+    try {
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('username, avatar')
+            .eq('id', userId)
+            .single();
+
+        if (!error) {
+            usersCache[userId] = data;
+            return data;
+        }
+
+        // If the error indicates the column doesn't exist, try the fallback
+        if (error && /column .*avatar.* does not exist/i.test(error.message)) {
+            console.warn('`avatar` column not found, falling back to `avatar_url`.');
+            const { data: data2, error: error2 } = await supabase
+                .from('profiles')
+                .select('username, avatar_url')
+                .eq('id', userId)
+                .single();
+
+            if (!error2) {
+                // Normalize to `avatar` property to keep rendering code consistent
+                const normalized = { username: data2.username, avatar: data2.avatar_url };
+                usersCache[userId] = normalized;
+                return normalized;
+            }
+
+            console.error('Fallback fetch error for user profile:', error2);
+            return { username: 'Unknown', avatar: null };
+        }
+
         console.error('Error fetching user profile:', error);
         return { username: 'Unknown', avatar: null };
+    } catch (err) {
+        console.error('Unexpected error fetching user profile:', err);
+        return { username: 'Unknown', avatar: null };
     }
-    usersCache[userId] = data;
-    return data;
 }
 
 
