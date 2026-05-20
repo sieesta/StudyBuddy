@@ -27,13 +27,32 @@ serve(async (req: Request) => {
       });
     }
 
+    // Validate prompt
+    if (!prompt || typeof prompt !== 'string' || !prompt.trim()) {
+      return new Response(JSON.stringify({ error: 'Prompt is required in the request body.' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 400,
+      });
+    }
+
+    // Gemini expects parts[].data to contain the payload (oneof). Wrap text under data.text
+    const requestBody = {
+      contents: [
+        {
+          parts: [
+            {
+              data: { text: prompt },
+            },
+          ],
+        },
+      ],
+    };
+
     // Forward the request to the Gemini API
     const response = await fetch(API_URL_BASE + `?key=${GEMINI_API_KEY}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-      }),
+      body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {
