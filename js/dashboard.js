@@ -20,22 +20,47 @@ const createGroupBtn = document.getElementById('create-group-btn');
 
 // Fetch and display all users initially
 async function fetchUsers() {
-    const { data: profiles, error } = await supabase.from('profiles').select('*');
-    if (error) {
-        console.error('Error fetching users:', error);
-        return;
+    try {
+        const { data: profiles, error } = await supabase.from('profiles').select('*');
+        if (error) {
+            console.error('Error fetching users:', error);
+            userList.innerHTML = `<p style="color: red;">Error loading users: ${error.message}</p>`;
+            return;
+        }
+        
+        console.log('Users fetched:', profiles?.length, profiles);
+        displayUsers(profiles);
+    } catch (err) {
+        console.error('Exception fetching users:', err);
+        userList.innerHTML = `<p style="color: red;">Exception: ${err.message}</p>`;
     }
-    displayUsers(profiles);
 }
 
 // Fetch and display all groups
 async function fetchGroups() {
-    const { data: groups, error } = await supabase.from('groups').select('*');
-    if (error) {
-        console.error('Error fetching groups:', error);
-        return;
+    try {
+        const { data: { user } } = await supabase.auth.getUser();
+        console.log('Current user:', user?.id);
+        
+        const { data: groups, error } = await supabase.from('groups').select('*');
+        if (error) {
+            console.error('Error fetching groups:', error);
+            groupList.innerHTML = `<p style="color: red;">Error loading groups: ${error.message}</p>`;
+            return;
+        }
+        
+        console.log('Groups fetched:', groups?.length, groups);
+        
+        if (!groups || groups.length === 0) {
+            groupList.innerHTML = '<p>No groups found. Create one to get started!</p>';
+            return;
+        }
+        
+        displayGroups(groups);
+    } catch (err) {
+        console.error('Exception fetching groups:', err);
+        groupList.innerHTML = `<p style="color: red;">Exception: ${err.message}</p>`;
     }
-    displayGroups(groups);
 }
 
 function displayUsers(users) {
@@ -118,5 +143,27 @@ createGroupBtn.addEventListener('click', async () => {
 
 
 // Initial data load
-fetchUsers();
-fetchGroups();
+async function initializeDashboard() {
+    console.log('Initializing dashboard...');
+    
+    try {
+        const { data: { user } } = await supabase.auth.getUser();
+        console.log('User authenticated:', !!user);
+        
+        if (!user) {
+            console.error('No user found, not loading groups');
+            return;
+        }
+        
+        await fetchUsers();
+        await fetchGroups();
+    } catch (err) {
+        console.error('Error initializing dashboard:', err);
+    }
+}
+
+// Call initialization when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('Dashboard DOM loaded');
+    initializeDashboard();
+});
