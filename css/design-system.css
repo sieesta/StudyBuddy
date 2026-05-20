@@ -267,13 +267,25 @@ button:disabled,
    ============================================ */
 
 header {
-    background: var(--bg-primary);
-    border-bottom: 1px solid var(--border-color);
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.95) 0%,
+        rgba(248, 250, 252, 0.9) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.4);
     position: sticky;
     top: 0;
     z-index: 100;
-    backdrop-filter: blur(10px);
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    transition: all var(--duration-base) var(--easing);
+}
+
+[data-theme="dark"] header {
+    background: linear-gradient(135deg,
+        rgba(15, 23, 42, 0.95) 0%,
+        rgba(30, 41, 59, 0.9) 100%);
+    border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 nav {
@@ -281,44 +293,64 @@ nav {
     justify-content: space-between;
     align-items: center;
     padding: var(--space-md) var(--space-lg);
-    gap: var(--space-lg);
+    gap: var(--space-xl);
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
 .nav-logo {
-    font-size: 1.5rem;
+    font-size: 1.375rem;
     font-weight: 700;
-    background: var(--primary-gradient);
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #6c63ff 0%, #8b5cf6 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    white-space: nowrap;
+    transition: all var(--duration-fast) var(--easing);
+    cursor: pointer;
+}
+
+.nav-logo:hover {
+    transform: scale(1.02);
 }
 
 .nav-links {
     display: flex;
-    gap: var(--space-lg);
+    gap: var(--space-xl);
     align-items: center;
     list-style: none;
+    flex: 1;
+    justify-content: center;
 }
 
 .nav-links a {
     color: var(--text-primary);
     font-weight: 500;
+    font-size: 0.95rem;
     position: relative;
     transition: color var(--duration-fast) var(--easing);
+    text-decoration: none;
+    letter-spacing: 0.3px;
 }
 
-.nav-links a::after {
+.nav-links a::before {
     content: '';
     position: absolute;
-    bottom: -4px;
+    bottom: -6px;
     left: 0;
     width: 0;
-    height: 2px;
-    background: var(--primary-gradient);
+    height: 3px;
+    background: linear-gradient(90deg, #6c63ff 0%, #8b5cf6 100%);
+    border-radius: 2px;
     transition: width var(--duration-fast) var(--easing);
 }
 
-.nav-links a:hover::after {
+.nav-links a:hover {
+    color: var(--primary-color);
+}
+
+.nav-links a:hover::before {
     width: 100%;
 }
 
@@ -326,27 +358,59 @@ nav {
     display: flex;
     gap: var(--space-md);
     align-items: center;
+    flex-shrink: 0;
 }
 
-#logout-btn,
-#dark-mode-toggle {
+#dark-mode-toggle,
+#logout-btn {
     width: auto;
-    padding: var(--space-sm) var(--space-md);
-    background: var(--bg-tertiary);
+    padding: 0.625rem var(--space-md);
+    background: var(--bg-secondary);
     color: var(--text-primary);
     border: 2px solid var(--border-color);
     border-radius: var(--radius-md);
     cursor: pointer;
     font-weight: 500;
+    font-size: 0.9rem;
     transition: all var(--duration-fast) var(--easing);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
 }
 
-#logout-btn:hover,
-#dark-mode-toggle:hover {
-    background: var(--primary-color);
+#dark-mode-toggle:hover,
+#logout-btn:hover {
+    background: var(--primary-gradient);
     color: white;
-    border-color: var(--primary-color);
+    border-color: transparent;
     transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(108, 99, 255, 0.3);
+}
+
+#dark-mode-toggle:active,
+#logout-btn:active {
+    transform: translateY(0);
+}
+
+/* Responsive Header */
+@media (max-width: 768px) {
+    nav {
+        padding: var(--space-md) var(--space-md);
+        gap: var(--space-md);
+    }
+
+    .nav-logo {
+        font-size: 1.25rem;
+    }
+
+    .nav-links {
+        display: none;
+    }
+
+    .nav-actions {
+        gap: var(--space-sm);
+    }
 }
 
 /* ============================================
