@@ -31,8 +31,30 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const loginForm = document.getElementById('loginForm');
     const signupForm = document.getElementById('signupForm');
+    const authFormContent = document.querySelector('.auth-form-content');
 
     console.log('Forms found - Login:', !!loginForm, 'Signup:', !!signupForm);
+
+    function setAuthMode(mode) {
+        if (!loginForm || !signupForm) {
+            return;
+        }
+
+        const loginActive = mode === 'login';
+        loginForm.classList.toggle('is-active', loginActive);
+        loginForm.classList.toggle('is-hidden', !loginActive);
+        signupForm.classList.toggle('is-active', !loginActive);
+        signupForm.classList.toggle('is-hidden', loginActive);
+
+        if (authFormContent) {
+            authFormContent.dataset.mode = mode;
+        }
+    }
+
+    window.toggleForms = function toggleForms() {
+        const loginIsVisible = loginForm?.classList.contains('is-active');
+        setAuthMode(loginIsVisible ? 'signup' : 'login');
+    };
 
     // Handle form submission for login
     if (loginForm) {
@@ -71,6 +93,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
     }
+
+    setAuthMode('signup');
 
     // Handle form submission for signup
     if (signupForm) {
@@ -114,10 +138,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                         alert(`Error creating profile: ${profileError.message}`);
                     } else {
                         alert('Signup successful! Please check your email to verify your account.');
-                        // Reset and show login form
+                        // Reset and show login form with a soft transition
                         signupForm.reset();
-                        signupForm.style.display = 'none';
-                        loginForm.style.display = 'block';
+                        setAuthMode('login');
                     }
                 }
             } catch (err) {

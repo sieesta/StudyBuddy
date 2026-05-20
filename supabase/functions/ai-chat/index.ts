@@ -1,85 +1,134 @@
 // @deno-types="https://deno.land/std@0.224.0/http/server.ts"
 // @ts-ignore - Deno module resolution
-// supabase/functions/ai-chat/index.ts
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 // @ts-ignore - Deno module resolution
 import { corsHeaders } from "../_shared/cors.ts";
 
-// Get the Gemini API key from the environment variables
 // @ts-ignore - Deno global
 const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
-const API_URL_BASE = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent`;
+const FUNCTION_VERSION = "ai-chat-v4";
+const GEMINI_MODEL = "gemini-2.0-flash-lite";
+
+function buildGeminiUrl(model: string) {
+  return `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+}
+
+type ChatMessage = {
+  role?: string;
+  text?: string;
+};
+
+function buildPromptText(history: ChatMessage[], prompt: string) {
+  const historyText = history
+    .filter((message) => typeof message?.text === "string" && message.text.trim())
+    .slice(-6)
+    .map((message) => `${message.role === "assistant" || message.role === "model" ? "Assistant" : "User"}: ${message.text!.trim()}`)
+    .join("\n");
+
+  if (!historyText) {
+    return prompt.trim();
+  }
+
+  return [
+    "Conversation so far:",
+    historyText,
+    "Current user prompt:",
+    prompt.trim(),
+  ].join("\n");
+}
+
+async function callGemini(promptText: string) {
+  const response = await fetch(buildGeminiUrl(GEMINI_MODEL), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-goog-api-key": GEMINI_API_KEY!,
+    },
+    body: JSON.stringify({
+      contents: [
+        {
+          parts: [{ text: promptText }],
+        },
+      ],
+    }),
+  });
+
+  const responseText = await response.text();
+  return { response, responseText };
+}
 
 serve(async (req: Request) => {
-  // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
 
   try {
-    // Get the user's prompt from the request body
-    const { prompt } = await req.json();
-
     if (!GEMINI_API_KEY) {
-      return new Response(JSON.stringify({ error: 'Missing GEMINI_API_KEY in function environment. Set GEMINI_API_KEY as an env var.' }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500,
+      return new Response(JSON.stringify({ error: "Missing GEMINI_API_KEY in function environment." }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
       });
     }
 
-    // Validate prompt
-    if (!prompt || typeof prompt !== 'string' || !prompt.trim()) {
-      return new Response(JSON.stringify({ error: 'Prompt is required in the request body.' }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400,
+    const body = await req.json();
+    const prompt = typeof body?.prompt === "string" ? body.prompt.trim() : "";
+    const history = Array.isArray(body?.history) ? body.history : [];
+
+    if (!prompt) {
+      return new Response(JSON.stringify({ error: "Prompt is required in the request body." }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
       });
     }
 
-    // Gemini expects parts[].data to contain the payload (oneof). Wrap text under data.text
-    const requestBody = {
-      contents: [
-        {
-          parts: [
-            {
-              data: { text: prompt },
-            },
-          ],
-        },
-      ],
-    };
+    const promptText = buildPromptText(history, prompt);
+    const firstAttempt = await callGemini(promptText);
+    let { response, responseText } = firstAttempt;
 
-    // Forward the request to the Gemini API
-    const response = await fetch(API_URL_BASE + `?key=${GEMINI_API_KEY}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(requestBody),
-    });
+    if (!response.ok && response.status === 429) {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const retryAttempt = await callGemini(promptText);
+      response = retryAttempt.response;
+      responseText = retryAttempt.responseText;
+    }
 
     if (!response.ok) {
-      const errorBody = await response.text();
-      throw new Error(`API call failed with status: ${response.status} - ${errorBody}`);
+      let retryAfter = response.headers.get("retry-after");
+      let errorMessage = `Gemini request failed with status ${response.status}.`;
+      if (response.status === 429) {
+        errorMessage = "Gemini rate limit reached. Please wait a moment and try again.";
+      }
+
+      return new Response(JSON.stringify({
+        error: errorMessage,
+        model: GEMINI_MODEL,
+        version: FUNCTION_VERSION,
+        retryAfter,
+        details: responseText,
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
     }
 
-    const data = await response.json();
-    
-    // Check for a valid response from Gemini
-    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content || !data.candidates[0].content.parts[0]) {
-        // This can happen if the prompt is blocked for safety reasons
-        throw new Error("Invalid response structure from Gemini API. The prompt may have been blocked.");
-    }
-      
-    const aiResponse = data.candidates[0].content.parts[0].text;
+    const data = JSON.parse(responseText);
+    const reply = data?.candidates?.[0]?.content?.parts?.map((part: { text?: string }) => part.text || "").join("").trim();
 
-    // Send the AI's response back to the client
-    return new Response(JSON.stringify({ response: aiResponse }), {
+    if (!reply) {
+      return new Response(JSON.stringify({ error: "Gemini returned no text response.", model: GEMINI_MODEL, version: FUNCTION_VERSION, details: data }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
+    }
+
+    return new Response(JSON.stringify({ response: reply, model: GEMINI_MODEL, version: FUNCTION_VERSION }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
   } catch (error) {
-    // Handle any errors
-    return new Response(JSON.stringify({ error: (error as Error).message }), {
+    return new Response(JSON.stringify({ error: (error as Error).message, version: FUNCTION_VERSION }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
+      status: 200,
     });
   }
 });

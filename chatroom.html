@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chatroom - StudyBuddy Finder</title>
-    <link rel="stylesheet" href="css/design-system.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
@@ -38,6 +37,7 @@
             <!-- Center - Chat Area -->
             <div class="chat-main">
                 <div class="chat-header">
+                    <button id="chat-sidebar-toggle" class="chat-sidebar-toggle btn-ghost" type="button" aria-label="Toggle study groups">☰</button>
                     <h2 id="group-name-header">Select a group</h2>
                     <button id="video-call-btn" class="btn btn-sm btn-ghost">📞 Video Call</button>
                 </div>
@@ -50,22 +50,22 @@
                 </div>
             </div>
 
-            <!-- Right Sidebar - AI Assistant -->
+            <!-- Right Sidebar - Study Helper -->
             <div class="ai-panel">
                 <div class="ai-header">
-                    <h3>🤖 StudyAI</h3>
+                    <h3>✨ Gemini Chat</h3>
                 </div>
                 <div class="ai-quick-buttons">
-                    <button class="ai-quick-btn" data-prompt="Explain this topic">📝 Explain</button>
-                    <button class="ai-quick-btn" data-prompt="Help me solve this">🔍 Solve</button>
-                    <button class="ai-quick-btn" data-prompt="Summarize this lesson">📋 Summarize</button>
+                    <button class="ai-quick-btn" data-prompt="Explain this topic">📝 Explain it</button>
+                    <button class="ai-quick-btn" data-prompt="Help me solve this">🔍 Solve it</button>
+                    <button class="ai-quick-btn" data-prompt="Summarize this lesson">📋 Summarize it</button>
                 </div>
                 <div id="ai-chat-window" class="ai-chat-window">
-                    <!-- AI messages will appear here -->
+                    <!-- Study helper messages will appear here -->
                 </div>
                 <div class="ai-input-container">
-                    <input type="text" id="ai-input" placeholder="Ask StudyAI...">
-                    <button id="ai-send-btn" class="btn btn-sm">Ask</button>
+                    <input type="text" id="ai-input" placeholder="Ask for help with a topic...">
+                    <button id="ai-send-btn" class="btn btn-sm">Send</button>
                     <div id="ai-spinner" class="spinner" style="display: none;"></div>
                 </div>
             </div>
@@ -81,7 +81,8 @@
     </div>
 
     <script src="https://meet.jit.si/external_api.js"></script>
-    <script type="module" src="js/chat.js"></script>
-    <script type="module" src="js/main.js"></script>
+    <div class="chat-sidebar-backdrop"></div>
+
+    <script type="module" src="app.js"></script>
 </body>
 </html>

@@ -20,12 +20,66 @@ const bioInput = document.getElementById('bio');
 const avatarContainer = document.getElementById('avatar-container');
 const avatarUpload = document.getElementById('avatar-upload');
 const changeAvatarBtn = document.getElementById('change-avatar-btn');
+const profileContainer = document.querySelector('.profile-container');
+const profileSkeleton = document.getElementById('profile-loading-skeleton');
+const statGroups = document.getElementById('stat-groups');
+const statMessages = document.getElementById('stat-messages');
+const statBuddies = document.getElementById('stat-buddies');
+const statHours = document.getElementById('stat-hours');
 
 let userId;
 let currentAvatarUrl = null;
 
+function setProfileLoading(isLoading) {
+    if (profileContainer) {
+        profileContainer.classList.toggle('is-loading', isLoading);
+    }
+
+    if (profileSkeleton) {
+        profileSkeleton.style.display = isLoading ? 'grid' : 'none';
+    }
+}
+
+async function loadProfileStats(currentUserId) {
+    try {
+        const { data: createdGroups } = await supabase
+            .from('groups')
+            .select('id')
+            .eq('created_by', currentUserId);
+
+        const { data: sentMessages } = await supabase
+            .from('messages')
+            .select('id, group_id, user_id')
+            .eq('user_id', currentUserId);
+
+        const groupIds = Array.from(new Set((sentMessages || []).map(message => message.group_id).filter(Boolean)));
+        const partnerIds = new Set();
+
+        if (groupIds.length) {
+            const { data: groupMessages } = await supabase
+                .from('messages')
+                .select('user_id, group_id')
+                .in('group_id', groupIds);
+
+            (groupMessages || []).forEach((message) => {
+                if (message.user_id && message.user_id !== currentUserId) {
+                    partnerIds.add(message.user_id);
+                }
+            });
+        }
+
+        if (statGroups) statGroups.textContent = String((createdGroups || []).length);
+        if (statMessages) statMessages.textContent = String((sentMessages || []).length);
+        if (statBuddies) statBuddies.textContent = String(partnerIds.size);
+        if (statHours) statHours.textContent = String(Math.max(1, Math.round(((sentMessages || []).length || 0) / 10)));
+    } catch (error) {
+        console.warn('Error loading profile stats:', error);
+    }
+}
+
 // Load user profile data
 async function loadProfile() {
+    setProfileLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
         window.location.href = getRedirectPath('index.html');
@@ -41,6 +95,7 @@ async function loadProfile() {
 
     if (error) {
         console.error('Error fetching profile:', error);
+        setProfileLoading(false);
         return;
     }
 
@@ -51,7 +106,10 @@ async function loadProfile() {
         bioInput.value = profile.bio || '';
         currentAvatarUrl = profile.avatar_url;
         displayAvatar(profile.username, profile.avatar_url);
+        await loadProfileStats(userId);
     }
+
+    setProfileLoading(false);
 }
 
 function displayAvatar(username, avatarUrl) {

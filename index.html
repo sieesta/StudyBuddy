@@ -4,14 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StudyBuddy Finder - Find Your Study Partner</title>
-    <link rel="stylesheet" href="css/design-system.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <!-- Page Loader -->
     <div class="page-loader" id="pageLoader">
-        <div style="display: flex; flex-direction: column; align-items: center; gap: 1.5rem;">
-            <div class="loader-circle"></div>
+        <div class="loader-card">
+            <div class="loader-orbit" aria-hidden="true"></div>
             <p class="loader-text">StudyBuddy Finder</p>
         </div>
     </div>
@@ -33,7 +32,7 @@
         <div class="auth-form">
             <div class="auth-form-content">
                 <!-- Login Form -->
-                <form id="loginForm" style="display: none;">
+                <form id="loginForm" class="is-hidden">
                     <h2>Welcome Back</h2>
                     
                     <div class="form-group">
@@ -54,7 +53,7 @@
                 </form>
 
                 <!-- Signup Form -->
-                <form id="signupForm">
+                <form id="signupForm" class="is-active">
                     <h2>Get Started</h2>
                     
                     <div class="form-group">
@@ -82,36 +81,6 @@
         </div>
     </div>
 
-    <script>
-        function toggleForms() {
-            const loginForm = document.getElementById('loginForm');
-            const signupForm = document.getElementById('signupForm');
-            
-            if (loginForm.style.display === 'none') {
-                loginForm.style.display = 'block';
-                signupForm.style.display = 'none';
-            } else {
-                loginForm.style.display = 'none';
-                signupForm.style.display = 'block';
-            }
-        }
-
-        // Ensure signup form is visible on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            const loginForm = document.getElementById('loginForm');
-            const signupForm = document.getElementById('signupForm');
-            if (loginForm && signupForm) {
-                loginForm.style.display = 'none';
-                signupForm.style.display = 'block';
-            }
-        });
-
-        // Hide loader after 2 seconds
-        setTimeout(() => {
-            document.getElementById('pageLoader').style.display = 'none';
-        }, 2000);
-    </script>
-    <script type="module" src="js/auth.js"></script>
-    <script type="module" src="js/main.js"></script>
+    <script type="module" src="app.js"></script>
 </body>
 </html>
