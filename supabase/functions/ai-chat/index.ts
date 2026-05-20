@@ -8,7 +8,7 @@ import { corsHeaders } from "../_shared/cors.ts";
 // Get the Gemini API key from the environment variables
 // @ts-ignore - Deno global
 const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
-const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`;
+const API_URL_BASE = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent`;
 
 serve(async (req: Request) => {
   // Handle CORS preflight requests
@@ -20,10 +20,17 @@ serve(async (req: Request) => {
     // Get the user's prompt from the request body
     const { prompt } = await req.json();
 
+    if (!GEMINI_API_KEY) {
+      return new Response(JSON.stringify({ error: 'Missing GEMINI_API_KEY in function environment. Set GEMINI_API_KEY as an env var.' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500,
+      });
+    }
+
     // Forward the request to the Gemini API
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    const response = await fetch(API_URL_BASE + `?key=${GEMINI_API_KEY}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
       }),
