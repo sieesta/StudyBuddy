@@ -1,8 +1,12 @@
+// @deno-types="https://deno.land/std@0.224.0/http/server.ts"
+// @ts-ignore - Deno module resolution
 // supabase/functions/ai-chat/index.ts
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
+// @ts-ignore - Deno module resolution
 import { corsHeaders } from "../_shared/cors.ts";
 
 // Get the Gemini API key from the environment variables
+// @ts-ignore - Deno global
 const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
 const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`;
 

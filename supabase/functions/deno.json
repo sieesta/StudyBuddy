@@ -1,0 +1,16 @@
+{
+  "tasks": {
+    "start": "deno run --allow-all index.ts"
+  },
+  "imports": {
+    "@std/http": "https://deno.land/std@0.224.0/http/mod.ts",
+    "@std/http/server": "https://deno.land/std@0.224.0/http/server.ts"
+  },
+  "compilerOptions": {
+    "lib": ["deno.window"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": false,
+    "forceConsistentCasingInFileNames": true
+  }
+}
