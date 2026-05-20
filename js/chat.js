@@ -1,6 +1,12 @@
 // js/chat.js
 import { supabase } from './supabase.js';
 
+// Get base path for GitHub Pages
+function getRedirectPath(page) {
+    const basePath = new URL(document.baseURI).pathname;
+    return basePath + page;
+}
+
 const messagesContainer = document.getElementById('messages-container');
 const messageInput = document.getElementById('message-input');
 const sendBtn = document.getElementById('send-btn');
@@ -24,7 +30,7 @@ const groupId = urlParams.get('group_id');
 
 if (!groupId) {
     alert('No group selected!');
-    window.location.href = 'dashboard.html';
+    window.location.href = getRedirectPath('dashboard.html');
 }
 
 let currentUser;
@@ -309,7 +315,7 @@ window.addEventListener('beforeunload', () => {
 async function init() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-        window.location.href = 'index.html';
+        window.location.href = getRedirectPath('index.html');
         return;
     }
     currentUser = user;

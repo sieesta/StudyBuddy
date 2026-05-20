@@ -57,7 +57,8 @@ function displayGroups(groups) {
     document.querySelectorAll('.join-group-btn').forEach(button => {
         button.addEventListener('click', (e) => {
             const groupId = e.target.dataset.groupId;
-            window.location.href = `chatroom.html?group_id=${groupId}`;
+            const basePath = new URL(document.baseURI).pathname;
+            window.location.href = basePath + `chatroom.html?group_id=${groupId}`;
         });
     });
 }

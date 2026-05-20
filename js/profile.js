@@ -1,6 +1,12 @@
 // js/profile.js
 import { supabase } from './supabase.js';
 
+// Get base path for GitHub Pages
+function getRedirectPath(page) {
+    const basePath = new URL(document.baseURI).pathname;
+    return basePath + page;
+}
+
 const profileForm = document.getElementById('profile-form');
 const usernameInput = document.getElementById('username');
 const courseInput = document.getElementById('course');
@@ -17,7 +23,7 @@ let currentAvatarUrl = null;
 async function loadProfile() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-        window.location.href = 'index.html';
+        window.location.href = getRedirectPath('index.html');
         return;
     }
     userId = user.id;

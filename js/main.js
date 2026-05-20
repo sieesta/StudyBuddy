@@ -1,20 +1,33 @@
 // js/main.js
 import { supabase } from './supabase.js';
 
+// Get base path for GitHub Pages
+function getRedirectPath(page) {
+    const basePath = new URL(document.baseURI).pathname;
+    return basePath + page;
+}
+
 // Check authentication status
 async function checkAuth() {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    // Redirect unauthenticated users to login (except on index.html)
-    if (!user && !window.location.pathname.includes('index.html')) {
-        window.location.href = 'index.html';
-        return;
-    }
-    
-    // Redirect authenticated users away from index.html
-    if (user && window.location.pathname.includes('index.html')) {
-        window.location.href = 'dashboard.html';
-        return;
+    try {
+        const { data: { user } } = await supabase.auth.getUser();
+        const currentPath = window.location.pathname;
+        
+        // Redirect unauthenticated users to login (except on index.html)
+        if (!user && !currentPath.includes('index.html')) {
+            console.log('No user detected, redirecting to login');
+            window.location.href = getRedirectPath('index.html');
+            return;
+        }
+        
+        // Redirect authenticated users away from index.html
+        if (user && currentPath.includes('index.html')) {
+            console.log('User already authenticated, redirecting to dashboard');
+            window.location.href = getRedirectPath('dashboard.html');
+            return;
+        }
+    } catch (err) {
+        console.error('Auth check error:', err);
     }
 }
 
@@ -61,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async () => {
             await supabase.auth.signOut();
-            window.location.href = 'index.html';
+            window.location.href = getRedirectPath('index.html');
         });
     }
 });

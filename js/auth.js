@@ -1,13 +1,24 @@
 // js/auth.js
 import { supabase } from './supabase.js';
 
+// Get base path for GitHub Pages
+function getRedirectPath(page) {
+    const basePath = new URL(document.baseURI).pathname;
+    return basePath + page;
+}
+
 // Wait for DOM to be ready
 document.addEventListener('DOMContentLoaded', async () => {
-    // Check if user is already logged in
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-        window.location.href = 'dashboard.html';
-        return;
+    try {
+        // Check if user is already logged in
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+            console.log('User already logged in, redirecting to dashboard');
+            window.location.href = getRedirectPath('dashboard.html');
+            return;
+        }
+    } catch (err) {
+        console.error('Auth check error:', err);
     }
 
     const loginForm = document.getElementById('loginForm');
@@ -36,7 +47,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     console.error('Login error:', error);
                 } else {
                     console.log('Login successful');
-                    window.location.href = 'dashboard.html';
+                    // Wait a moment for session to be established
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    window.location.href = getRedirectPath('dashboard.html');
                 }
             } catch (err) {
                 alert(`Unexpected error: ${err.message}`);
