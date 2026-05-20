@@ -3,30 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyBuddy Finder</title>
+    <title>StudyBuddy Finder - Find Your Study Partner</title>
+    <link rel="stylesheet" href="css/design-system.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Welcome to StudyBuddy Finder</h1>
-        <div id="auth-container">
-            <div id="login-form">
-                <h2>Login</h2>
-                <input type="email" id="login-email" placeholder="Email" required>
-                <input type="password" id="login-password" placeholder="Password" required>
-                <button id="login-btn">Login</button>
-                <p>Don't have an account? <a href="#" id="show-signup">Sign up</a></p>
+    <!-- Page Loader -->
+    <div class="page-loader" id="pageLoader">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 1.5rem;">
+            <div class="loader-circle"></div>
+            <p class="loader-text">StudyBuddy Finder</p>
+        </div>
+    </div>
+
+    <!-- Auth Container -->
+    <div class="auth-container">
+        <!-- Brand Section -->
+        <div class="auth-brand">
+            <div class="auth-brand-content">
+                <h1>StudyBuddy Finder</h1>
+                <p>Connect with students, ace your exams, and make learning social.</p>
+                <p style="margin-top: 2rem; font-size: 0.9rem; opacity: 0.9;">
+                    📚 Join study groups • 🎯 Find perfect study partners • 🤖 Get AI help
+                </p>
             </div>
-            <div id="signup-form" style="display: none;">
-                <h2>Sign Up</h2>
-                <input type="email" id="signup-email" placeholder="Email" required>
-                <input type="password" id="signup-password" placeholder="Password" required>
-                <input type="text" id="signup-username" placeholder="Username" required>
-                <button id="signup-btn">Sign Up</button>
-                <p>Already have an account? <a href="#" id="show-login">Login</a></p>
+        </div>
+
+        <!-- Form Section -->
+        <div class="auth-form">
+            <div class="auth-form-content">
+                <!-- Login Form -->
+                <form id="loginForm" style="display: none;">
+                    <h2>Welcome Back</h2>
+                    
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" placeholder="your@email.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" placeholder="••••••••" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-full" id="login-btn">Sign In</button>
+
+                    <div class="auth-toggle">
+                        Don't have an account? <a href="#" onclick="toggleForms(); return false;">Create one</a>
+                    </div>
+                </form>
+
+                <!-- Signup Form -->
+                <form id="signupForm">
+                    <h2>Get Started</h2>
+                    
+                    <div class="form-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" placeholder="your@email.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" placeholder="••••••••" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signup-username">Username</label>
+                        <input type="text" id="signup-username" placeholder="john_doe" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-full" id="signup-btn">Create Account</button>
+
+                    <div class="auth-toggle">
+                        Already have an account? <a href="#" onclick="toggleForms(); return false;">Sign in</a>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+
+    <script>
+        function toggleForms() {
+            document.getElementById('loginForm').style.display = 
+                document.getElementById('loginForm').style.display === 'none' ? 'block' : 'none';
+            document.getElementById('signupForm').style.display = 
+                document.getElementById('signupForm').style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Hide loader after 2 seconds
+        setTimeout(() => {
+            document.getElementById('pageLoader').style.display = 'none';
+        }, 2000);
+    </script>
     <script type="module" src="js/auth.js"></script>
+    <script type="module" src="js/main.js"></script>
 </body>
 </html>

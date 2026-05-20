@@ -3,41 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - StudyBuddy Finder</title>
+    <title>Dashboard - Find Study Buddies | StudyBuddy Finder</title>
+    <link rel="stylesheet" href="css/design-system.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <header>
         <nav>
-            <a href="dashboard.html">Dashboard</a>
-            <a href="profile.html">Profile</a>
-            <button id="logout-btn">Logout</button>
-            <button id="dark-mode-toggle">🌙</button>
+            <div class="nav-logo">StudyBuddy Finder</div>
+            <ul class="nav-links">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="chatroom.html">Chatroom</a></li>
+                <li><a href="profile.html">Profile</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button id="dark-mode-toggle">🌙</button>
+                <button id="logout-btn">Logout</button>
+            </div>
         </nav>
     </header>
-    <main class="container">
-        <h1>Find a Study Buddy</h1>
-        <div class="search-container">
-            <input type="text" id="search-input" placeholder="Search by subject or course...">
-            <button id="search-btn">Search</button>
-            <button id="match-buddy-btn">Match Me a Buddy</button>
+
+    <main class="container" style="padding-top: 2rem; padding-bottom: 2rem;">
+        <!-- Header Section -->
+        <div class="dashboard-header">
+            <h1>Find Your Study Partner</h1>
+            <p style="color: var(--text-secondary); margin-top: 0.5rem;">Connect with students studying the same subjects</p>
         </div>
-        <div id="user-list">
+
+        <!-- Search & Filter Section -->
+        <div class="search-container">
+            <input type="text" id="search-input" class="search-input" placeholder="Search by subject, course, or name...">
+            <button id="match-buddy-btn" class="btn btn-sm">🎯 Match Me</button>
+        </div>
+
+        <div class="filter-chips">
+            <button class="chip active" data-filter="all">All</button>
+            <button class="chip" data-filter="mathematics">Mathematics</button>
+            <button class="chip" data-filter="science">Science</button>
+            <button class="chip" data-filter="language">Languages</button>
+            <button class="chip" data-filter="engineering">Engineering</button>
+        </div>
+
+        <!-- Loading Skeletons -->
+        <div id="loadingSkeletons" style="display: none;">
+            <div class="users-grid">
+                <div class="card skeleton-card">
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="skeleton skeleton-avatar"></div>
+                        <div style="flex: 1;">
+                            <div class="skeleton skeleton-text" style="width: 60%;"></div>
+                            <div class="skeleton skeleton-text" style="width: 40%;"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton skeleton-text"></div>
+                    <div class="skeleton skeleton-text" style="width: 80%;"></div>
+                </div>
+                <div class="card skeleton-card">
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="skeleton skeleton-avatar"></div>
+                        <div style="flex: 1;">
+                            <div class="skeleton skeleton-text" style="width: 60%;"></div>
+                            <div class="skeleton skeleton-text" style="width: 40%;"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton skeleton-text"></div>
+                    <div class="skeleton skeleton-text" style="width: 80%;"></div>
+                </div>
+                <div class="card skeleton-card">
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="skeleton skeleton-avatar"></div>
+                        <div style="flex: 1;">
+                            <div class="skeleton skeleton-text" style="width: 60%;"></div>
+                            <div class="skeleton skeleton-text" style="width: 40%;"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton skeleton-text"></div>
+                    <div class="skeleton skeleton-text" style="width: 80%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Grid -->
+        <div id="user-list" class="users-grid">
             <!-- User profiles will be dynamically inserted here -->
         </div>
 
-        <hr>
+        <!-- Study Groups Section -->
+        <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border-color);">
+            <h2>Study Groups</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Join or create a group to study together</p>
+            
+            <div id="group-list" class="users-grid">
+                <!-- Study groups will be dynamically inserted here -->
+            </div>
 
-        <h1>Study Groups</h1>
-        <div id="group-list">
-            <!-- Study groups will be dynamically inserted here -->
-        </div>
-        <div class="create-group-container">
-            <input type="text" id="group-name" placeholder="New group name">
-            <input type="text" id="group-subject" placeholder="Group subject">
-            <button id="create-group-btn">Create Group</button>
+            <!-- Create Group -->
+            <div class="card" style="margin-top: 2rem; max-width: 500px;">
+                <h3>Create New Study Group</h3>
+                <form id="createGroupForm" style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+                    <input type="text" id="group-name" placeholder="Group name" required>
+                    <input type="text" id="group-subject" placeholder="Subject or course" required>
+                    <button type="submit" class="btn btn-full">Create Group</button>
+                </form>
+            </div>
         </div>
     </main>
+
     <script type="module" src="js/dashboard.js"></script>
     <script type="module" src="js/main.js"></script>
 </body>

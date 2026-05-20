@@ -4,44 +4,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile - StudyBuddy Finder</title>
+    <link rel="stylesheet" href="css/design-system.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <header>
         <nav>
-            <a href="dashboard.html">Dashboard</a>
-            <a href="profile.html">Profile</a>
-            <button id="logout-btn">Logout</button>
-            <button id="dark-mode-toggle">🌙</button>
+            <div class="nav-logo">StudyBuddy Finder</div>
+            <ul class="nav-links">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="chatroom.html">Chatroom</a></li>
+                <li><a href="profile.html">Profile</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button id="dark-mode-toggle">🌙</button>
+                <button id="logout-btn">Logout</button>
+            </div>
         </nav>
     </header>
-    <main class="container">
+
+    <main class="profile-container">
         <h1>Your Profile</h1>
-        <div id="profile-container">
-            <div class="profile-header">
-                <div id="avatar-container">
+
+        <div class="profile-header">
+            <!-- Avatar Section -->
+            <div class="profile-avatar-section">
+                <div id="avatar-container" class="profile-avatar">
                     <!-- Avatar will be loaded here -->
                 </div>
                 <input type="file" id="avatar-upload" accept="image/*" style="display: none;">
-                <button id="change-avatar-btn">Change Picture</button>
+                <button id="change-avatar-btn" class="btn btn-sm">Change Picture</button>
             </div>
-            <form id="profile-form">
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username">
 
-                <label for="course">Course:</label>
-                <input type="text" id="course" name="course">
+            <!-- Profile Form -->
+            <div class="profile-info">
+                <form id="profile-form" class="profile-form">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" placeholder="your_username" required>
+                    </div>
 
-                <label for="subjects">Subjects (comma-separated):</label>
-                <input type="text" id="subjects" name="subjects">
+                    <div class="form-group">
+                        <label for="course">Course / Program</label>
+                        <input type="text" id="course" name="course" placeholder="e.g., Computer Science, B.Sc">
+                    </div>
 
-                <label for="bio">Bio:</label>
-                <textarea id="bio" name="bio"></textarea>
+                    <div class="form-group">
+                        <label for="subjects">Subjects (comma-separated)</label>
+                        <input type="text" id="subjects" name="subjects" placeholder="e.g., Mathematics, Physics, Chemistry">
+                    </div>
 
-                <button type="submit">Update Profile</button>
-            </form>
+                    <div class="form-group">
+                        <label for="bio">Bio</label>
+                        <textarea id="bio" name="bio" placeholder="Tell us about yourself..." style="min-height: 100px;"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-full">Save Changes</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="profile-stats">
+            <div class="stat-card">
+                <div class="stat-value" id="stat-groups">0</div>
+                <div class="stat-label">Study Groups</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-messages">0</div>
+                <div class="stat-label">Messages Sent</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-buddies">0</div>
+                <div class="stat-label">Study Partners</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-hours">0</div>
+                <div class="stat-label">Study Hours</div>
+            </div>
         </div>
     </main>
+
     <script type="module" src="js/profile.js"></script>
     <script type="module" src="js/main.js"></script>
 </body>

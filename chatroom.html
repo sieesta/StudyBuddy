@@ -4,42 +4,70 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chatroom - StudyBuddy Finder</title>
+    <link rel="stylesheet" href="css/design-system.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <header>
         <nav>
-            <a href="dashboard.html">Dashboard</a>
-            <a href="profile.html">Profile</a>
-            <button id="logout-btn">Logout</button>
-            <button id="dark-mode-toggle">🌙</button>
+            <div class="nav-logo">StudyBuddy Finder</div>
+            <ul class="nav-links">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="chatroom.html">Chatroom</a></li>
+                <li><a href="profile.html">Profile</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button id="dark-mode-toggle">🌙</button>
+                <button id="logout-btn">Logout</button>
+            </div>
         </nav>
     </header>
-    <main class="container chat-container">
-        <div id="chat-area">
-            <div id="chat-header">
-                <h1 id="group-name-header">Chat Room</h1>
-                <button id="video-call-btn">📞</button>
+
+    <main class="container" style="padding: 0;">
+        <div class="chat-container">
+            <!-- Left Sidebar - Study Groups -->
+            <div class="chat-sidebar">
+                <div class="chat-sidebar-header">
+                    <h3>📚 Study Groups</h3>
+                </div>
+                <ul class="chat-groups-list">
+                    <!-- Groups will be dynamically loaded -->
+                </ul>
             </div>
-            <div id="chat-window">
-                <div id="messages-container">
-                    <!-- Messages will be dynamically inserted here -->
+
+            <!-- Center - Chat Area -->
+            <div class="chat-main">
+                <div class="chat-header">
+                    <h2 id="group-name-header">Select a group</h2>
+                    <button id="video-call-btn" class="btn btn-sm btn-ghost">📞 Video Call</button>
+                </div>
+                <div id="messages-container" class="chat-messages">
+                    <!-- Messages will be dynamically loaded -->
+                </div>
+                <div class="chat-input-container">
+                    <input type="text" id="message-input" placeholder="Type a message...">
+                    <button id="send-btn" class="btn">Send</button>
                 </div>
             </div>
-            <div id="chat-input-container">
-                <input type="text" id="message-input" placeholder="Type a message...">
-                <button id="send-btn">Send</button>
-            </div>
-        </div>
-        <div id="ai-chatbot-panel">
-            <h2>StudyAI 🤖</h2>
-            <div id="ai-chat-window">
-                <!-- AI chat messages will appear here -->
-            </div>
-            <div id="ai-input-container">
-                <input type="text" id="ai-input" placeholder="Ask StudyAI...">
-                <button id="ai-send-btn">Ask</button>
-                <div id="ai-spinner" class="spinner" style="display: none;"></div>
+
+            <!-- Right Sidebar - AI Assistant -->
+            <div class="ai-panel">
+                <div class="ai-header">
+                    <h3>🤖 StudyAI</h3>
+                </div>
+                <div class="ai-quick-buttons">
+                    <button class="ai-quick-btn" data-prompt="Explain this topic">📝 Explain</button>
+                    <button class="ai-quick-btn" data-prompt="Help me solve this">🔍 Solve</button>
+                    <button class="ai-quick-btn" data-prompt="Summarize this lesson">📋 Summarize</button>
+                </div>
+                <div id="ai-chat-window" class="ai-chat-window">
+                    <!-- AI messages will appear here -->
+                </div>
+                <div class="ai-input-container">
+                    <input type="text" id="ai-input" placeholder="Ask StudyAI...">
+                    <button id="ai-send-btn" class="btn btn-sm">Ask</button>
+                    <div id="ai-spinner" class="spinner" style="display: none;"></div>
+                </div>
             </div>
         </div>
     </main>
