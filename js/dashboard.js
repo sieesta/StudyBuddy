@@ -14,9 +14,11 @@ function getRedirectPath(page) {
 
 const userList = document.getElementById('user-list');
 const groupList = document.getElementById('group-list');
-const searchBtn = document.getElementById('search-btn');
 const searchInput = document.getElementById('search-input');
-const createGroupBtn = document.getElementById('create-group-btn');
+const matchBuddyBtn = document.getElementById('match-buddy-btn');
+const createGroupForm = document.getElementById('createGroupForm');
+const groupNameInput = document.getElementById('group-name');
+const groupSubjectInput = document.getElementById('group-subject');
 
 // Fetch and display all users initially
 async function fetchUsers() {
@@ -99,47 +101,85 @@ function displayGroups(groups) {
 }
 
 // Search functionality
-searchBtn.addEventListener('click', async () => {
+if (matchBuddyBtn) {
+    matchBuddyBtn.addEventListener('click', performSearch);
+}
+
+if (searchInput) {
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            performSearch();
+        }
+    });
+}
+
+async function performSearch() {
     const searchTerm = searchInput.value.trim().toLowerCase();
     if (!searchTerm) {
-        fetchUsers();
+        await fetchUsers();
         return;
     }
 
-    const { data: profiles, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .or(`subjects.ilike.%${searchTerm}%,course.ilike.%${searchTerm}%`);
+    try {
+        const { data: profiles, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .or(`subjects.ilike.%${searchTerm}%,course.ilike.%${searchTerm}%`);
 
-    if (error) {
-        console.error('Error searching users:', error);
-    } else {
-        displayUsers(profiles);
+        if (error) {
+            console.error('Error searching users:', error);
+            userList.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+        } else {
+            displayUsers(profiles);
+        }
+    } catch (err) {
+        console.error('Exception searching users:', err);
+        userList.innerHTML = `<p style="color: red;">Exception: ${err.message}</p>`;
     }
-});
+}
 
 // Create group functionality
-createGroupBtn.addEventListener('click', async () => {
-    const groupName = document.getElementById('group-name').value;
-    const groupSubject = document.getElementById('group-subject').value;
-    const { data: { user } } = await supabase.auth.getUser();
+if (createGroupForm) {
+    createGroupForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const groupName = groupNameInput.value.trim();
+        const groupSubject = groupSubjectInput.value.trim();
+        
+        if (!groupName || !groupSubject) {
+            alert('Please fill in all fields');
+            return;
+        }
+        
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            
+            if (!user) {
+                alert('You must be logged in to create a group');
+                return;
+            }
 
-    if (!groupName || !groupSubject || !user) {
-        alert('Please provide a group name, subject and be logged in.');
-        return;
-    }
+            const { data, error } = await supabase
+                .from('groups')
+                .insert([{ name: groupName, subject: groupSubject, created_by: user.id }])
+                .select();
 
-    const { data, error } = await supabase
-        .from('groups')
-        .insert([{ name: groupName, subject: groupSubject, created_by: user.id }])
-        .select();
-
-    if (error) {
-        alert(`Error creating group: ${error.message}`);
-    } else {
-        fetchGroups(); // Refresh the list
-    }
-});
+            if (error) {
+                alert(`Error creating group: ${error.message}`);
+                console.error('Create group error:', error);
+            } else {
+                console.log('Group created:', data);
+                groupNameInput.value = '';
+                groupSubjectInput.value = '';
+                alert('Group created successfully!');
+                await fetchGroups(); // Refresh the list
+            }
+        } catch (err) {
+            alert(`Unexpected error: ${err.message}`);
+            console.error('Exception creating group:', err);
+        }
+    });
+}
 
 
 // Initial data load
